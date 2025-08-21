@@ -1,0 +1,16 @@
+openapi: 3.0.1
+info:
+  title: Exercice 1 - API Ping
+  version: "1.0.0"
+  description: In this exercice, the endpont /ping will return "pong" with an HTTP code validation 200 OK
+
+paths:
+  /ping:
+    get:
+      description: Simple endpoint, return "pong" as a text/plain
+      responses:
+        '200':
+          description: Réponse réussie avec une valeur de retour "pong"
+          content:
+            text/plain:
+              example: "pong"
