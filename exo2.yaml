@@ -1,0 +1,39 @@
+# Query parameters : paramètres fournis dans l'URL après "?" dans la requête 
+openapi: 3.0.1
+info:
+  title: Exercice 2 - User management 
+  version: 1.0.0
+  description: We retrieve a list of users via the /users route. The page and size parameters are included by default.
+
+paths:
+  /users:
+    get:
+      summary: List of users
+      parameters:
+        - name: page
+          in: query 
+          required: false   # required en false quand c'est un paramètre par défaut 
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 20
+      responses:
+        '200':
+          description: Return a list of users
+          content:
+            application/json:
+              example:
+                - id: 1
+                  name: "Alice"
+                  email: "alice@gmail.com"
+        '400':
+          description: "show irror if types for provided query parameters are bad"
+          content: 
+            application/json:
+              example:
+                error: "Bad types for provided query parameters"
