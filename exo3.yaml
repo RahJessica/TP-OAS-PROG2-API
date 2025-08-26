@@ -1,0 +1,223 @@
+openapi: 3.0.1
+info:
+  title: Task Management API
+  version: 1.0.0
+  description: Simple API to manage tasks
+
+components:
+  schemas:
+    Task:
+      type: object
+      required:
+        - id
+        - title
+        - completed
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: "Faire les courses"
+        completed:
+          type: boolean
+          example: false
+      description: Une tâche (Task)
+    TaskCreate:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          example: "Acheter du lait"
+        completed:
+          type: boolean
+          example: false
+      description: Objet utilisé pour créer une nouvelle tâche (sans id)
+    IdList:
+      type: array
+      items:
+        type: integer
+        format: int64
+      example: [1, 2, 3]
+    NotFoundError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Task not found"
+
+paths:
+  /tasks:
+    get:
+      summary: Récupère la liste de toutes les tâches
+      responses:
+        '200':
+          description: Liste de tâches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+              examples:
+                sample:
+                  value:
+                    - id: 1
+                      title: "Faire les courses"
+                      completed: false
+                    - id: 2
+                      title: "Envoyer un mail"
+                      completed: true
+    post:
+      summary: Create list of new tasks
+      operationId: createTasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TaskCreate'
+            examples:
+              createExample:
+                value:
+                  - title: "Buy oil and rice"
+                    completed: false
+                  - title: "Clean my room"
+                    completed: false
+      responses:
+        '201':
+          description: Liste des tâches nouvellement créées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+              examples:
+                createdExample:
+                  value:
+                    - id: 3
+                      title: "Acheter du pain"
+                      completed: false
+                    - id: 4
+                      title: "Nettoyer le bureau"
+                      completed: false
+        '400':
+          description: Requête invalide
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request payload"
+
+    delete:
+      summary: Delete some tasks by list of id
+      operationId: deleteMultipleTasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdList'
+            examples:
+              deleteIds:
+                value: [2, 5]
+      responses:
+        '200':
+          description: List of tasks deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+              examples:
+                deletedExample:
+                  value:
+                    - id: 2
+                      title: "Envoyer un mail"
+                      completed: true
+                    - id: 5
+                      title: "Appeler le plombier"
+                      completed: false
+        '400':
+          description: Requête invalide (ex: body non fourni)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request payload"
+
+  /tasks/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID de la tâche
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      summary: Récupère une tâche par son ID
+      operationId: getTaskById
+      responses:
+        '200':
+          description: Tâche trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+              examples:
+                taskExample:
+                  value:
+                    id: 1
+                    title: "Faire les courses"
+                    completed: false
+        '404':
+          description: Tâche non trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+              examples:
+                notFound:
+                  value:
+                    message: "Task not found"
+
+    delete:
+      summary: Supprime une tâche par son ID
+      operationId: deleteTaskById
+      responses:
+        '200':
+          description: Tâche supprimée (retourne la ressource supprimée)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+              examples:
+                deletedTask:
+                  value:
+                    id: 1
+                    title: "Faire les courses"
+                    completed: false
+        '404':
+          description: Tâche non trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+              examples:
+                notFound:
+                  value:
+                    message: "Task not found"
