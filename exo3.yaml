@@ -38,7 +38,7 @@ components:
       description: Objet utilisé pour créer une nouvelle tâche (sans id)
     IdList:
       type: array
-      items:
+      items:      # items : définir chaque composant d'un array
         type: integer
         format: int64
       example: [1, 2, 3]
